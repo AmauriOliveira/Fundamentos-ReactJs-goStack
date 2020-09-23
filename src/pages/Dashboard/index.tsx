@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
+// import { transitions } from 'polished';
 import incomeSvg from '../../assets/income.svg';
 import outcomeSvg from '../../assets/outcome.svg';
 import totalSvg from '../../assets/total.svg';
@@ -35,8 +36,9 @@ const Dashboard: React.FC = () => {
 
   useEffect(() => {
     api.get('transactions').then(response => {
-      const { income, outcome, total } = response.data.balance;
-      setBalance({ income, outcome, total });
+      const { balance, transactions } = response.data;
+      setBalance(balance);
+      setTransactions(transactions);
     });
   }, []);
 
@@ -86,7 +88,19 @@ const Dashboard: React.FC = () => {
             </thead>
 
             <tbody>
-              <tr>
+              {
+                transactions.map(transition => (
+                  <tr key={transition.id}>
+                    <td className="title">{transition.title}</td>
+                    <td className={transition.type}>
+                      {transition.type === 'outcome' && `- `}
+                      {formatValue(Number(transition.value))}
+                    </td>
+                    <td>{transition.category.title}</td>
+                    <td>{transition.created_at}</td>
+                  </tr>
+                ))
+                /*      <tr>
                 <td className="title">Computer</td>
                 <td className="income">R$ 5.000,00</td>
                 <td>Sell</td>
@@ -97,7 +111,8 @@ const Dashboard: React.FC = () => {
                 <td className="outcome">- R$ 1.000,00</td>
                 <td>Hosting</td>
                 <td>19/04/2020</td>
-              </tr>
+              </tr> */
+              }
             </tbody>
           </table>
         </TableContainer>
