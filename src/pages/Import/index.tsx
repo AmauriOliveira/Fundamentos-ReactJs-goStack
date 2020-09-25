@@ -9,7 +9,7 @@ import Upload from '../../components/Upload';
 
 import { Container, Title, ImportFileContainer, Footer } from './styles';
 
-import alert from '../../assets/alert.svg';
+import alertSvg from '../../assets/alert.svg';
 import api from '../../services/api';
 
 interface FileProps {
@@ -23,19 +23,31 @@ const Import: React.FC = () => {
   const history = useHistory();
 
   async function handleUpload(): Promise<void> {
-    // const data = new FormData();
+    if (!uploadedFiles.length) {
+      // eslint-disable-next-line no-alert
+      alert('Faça o upload do arquivo primeiro');
+      return;
+    }
+    const data = new FormData();
+    // no caso só aceita um arquivo por vez
+    data.append('file', uploadedFiles[0].file, uploadedFiles[0].name);
 
-    // TODO
+    history.push('/'); // voltar para home
 
     try {
-      // await api.post('/transactions/import', data);
+      await api.post('/transactions/import', data);
     } catch (err) {
-      // console.log(err.response.error);
+      console.log(err.response.error);
     }
   }
 
   function submitFile(files: File[]): void {
-    // TODO
+    const filesProps = files.map(file => ({
+      file,
+      name: file.name,
+      readableSize: filesize(file.size),
+    }));
+    setUploadedFiles(filesProps);
   }
 
   return (
@@ -49,7 +61,7 @@ const Import: React.FC = () => {
 
           <Footer>
             <p>
-              <img src={alert} alt="Alert" />
+              <img src={alertSvg} alt="Alert" />
               Permitido apenas arquivos CSV
             </p>
             <button onClick={handleUpload} type="button">

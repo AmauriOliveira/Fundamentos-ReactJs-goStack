@@ -36,9 +36,9 @@ const Dashboard: React.FC = () => {
 
   useEffect(() => {
     api.get('transactions').then(response => {
-      const { balance, transactions } = response.data;
-      setBalance(balance);
-      setTransactions(transactions);
+      // const { balance, transactions } = response.data.balance;
+      setBalance(response.data.balance);
+      setTransactions(response.data.transactions);
     });
   }, []);
 
@@ -88,31 +88,17 @@ const Dashboard: React.FC = () => {
             </thead>
 
             <tbody>
-              {
-                transactions.map(transition => (
-                  <tr key={transition.id}>
-                    <td className="title">{transition.title}</td>
-                    <td className={transition.type}>
-                      {transition.type === 'outcome' && `- `}
-                      {formatValue(Number(transition.value))}
-                    </td>
-                    <td>{transition.category.title}</td>
-                    <td>{transition.created_at}</td>
-                  </tr>
-                ))
-                /*      <tr>
-                <td className="title">Computer</td>
-                <td className="income">R$ 5.000,00</td>
-                <td>Sell</td>
-                <td>20/04/2020</td>
-              </tr>
-              <tr>
-                <td className="title">Website Hosting</td>
-                <td className="outcome">- R$ 1.000,00</td>
-                <td>Hosting</td>
-                <td>19/04/2020</td>
-              </tr> */
-              }
+              {transactions.map(transition => (
+                <tr key={transition.id}>
+                  <td className="title">{transition.title}</td>
+                  <td className={transition.type}>
+                    {transition.type === 'outcome' && `- `}
+                    {formatValue(Number(transition.value))}
+                  </td>
+                  <td>{transition.category.title}</td>
+                  <td>{transition.created_at}</td>
+                </tr>
+              ))}
             </tbody>
           </table>
         </TableContainer>
